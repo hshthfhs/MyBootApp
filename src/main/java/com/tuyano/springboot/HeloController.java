@@ -1,15 +1,14 @@
 package com.tuyano.springboot;
 
 
-import java.util.Optional;
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -39,6 +38,28 @@ public class HeloController {
 	@RequestMapping(value ="/", method = RequestMethod.POST)
 	@Transactional(readOnly=false)
 	public ModelAndView form(
+			@ModelAttribute("formModel")
+			@Validated MyData mydata,
+			BindingResult result,
+			ModelAndView mav) {
+		ModelAndView res = null;
+		if(!result.hasErrors()) {
+			repository.saveAndFlush(mydata);
+			res = new ModelAndView("redirect:/");
+		} else {
+			mav.setViewName("index");
+			mav.addObject("msg", "sorry, error");
+			Iterable<MyData> list = repository.findAll();
+			mav.addObject("datalist", list);
+			res = mav;
+		}
+		return res;
+	}
+
+
+	@RequestMapping(value ="/", method = RequestMethod.POST)
+	@Transactional(readOnly=false)
+	public ModelAndView form(
 			@ModelAttribute("formModel") MyData mydata,
 			ModelAndView mav) {
 		repository.saveAndFlush(mydata);
@@ -56,6 +77,9 @@ public class HeloController {
 		d1.setMemo("data!");
 		repository.saveAndFlush(d1);
 	}
+/*
+	//entityデータ更新
+	  初期表示　URLのidパラムでデータ取得
 
 	@RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
 	public ModelAndView edit(@ModelAttribute MyData mydata,
@@ -67,6 +91,8 @@ public class HeloController {
 		return mav;
 	}
 
+	//entityデータの更新
+
 	@RequestMapping(value = "/edit", method = RequestMethod.POST)
 	@Transactional(readOnly=false)
 	public ModelAndView update(@ModelAttribute MyData mydata,
@@ -76,6 +102,31 @@ public class HeloController {
 		return new ModelAndView("redirect:/");
 
 	}
+*/
+
+/*
+    //削除レコード確認メソッド
+ 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+	public ModelAndView delete(@PathVariable int id,
+			ModelAndView mav) {
+		mav.setViewName("delete");
+		Optional<MyData> data = repository.findById((long)id);
+		mav.addObject("formModel",data.get());
+
+		return mav;
+	}
+
+	//削除メソッド
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	@Transactional(readOnly=false)
+	public ModelAndView remove(@RequestParam long id,
+			ModelAndView mav) {
+		repository.deleteById(id);
+		return new ModelAndView("redirect:/");
+	}
+*/
+
+
 
 
 	/*	requestparamを計算して出力

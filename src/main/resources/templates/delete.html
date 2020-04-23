@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>top page</title>
+</head>
+<body>
+	<h1>edit page</h1>
+	<p class="msg" th:text="${new java util.Date().toString()}"></p>   <!-- 時を表示しよう  -->
+
+
+	<form method="post" action="/delete" th:object="${formModel}">
+		<input type="hidden" name="id" th:value="*{id}">
+		<table>
+			<tr>
+				<td><p th:text="|名前: *{name}|"></p></td>
+			</tr>
+			<tr>
+				<td><p th:text="|年齢: *{age}|"></p></td>
+			</tr>
+			<tr>
+				<td><p th:text=" *{mail}"></p></td>
+			</tr>
+			<tr>
+				<td><p th:text="*{memo}"></p></td>
+			</tr>
+			<tr>
+				<td><input type="submit" value ="delete"></td>
+			</tr>
+		</table>
+	</form>
+	<hr>
+<!--
+	<table>
+		<tr th:each="obj : ${datalist}">
+			<td th:text="${obj.id}"></td>
+			<td th:text="${obj.name}"></td>
+		</tr>
+	</table>
+ -->
+
+<!--
+	<div id="insert" th:insert="part::template"></div>
+ -->
+
+
+<!-- 条件式 (" 変数式 ? 値1 : 値2 ")
+	<h1 th:text="#{content.title}">Helo page</h1>
+	<p th:text="${id} + 'is' + (${check} ? ${trueVal} : ${falseVal})"></p>
+ -->
+
+
+<!-- 条件式（th:if trueの場合の処理      th:unless falseの場合の処理）
+	<h1 th:text="#{content.title}">Helo page</h1>
+	<p th:if="${check}" th:text="${id} + 'is' + ${trueVal}">messages.</p>
+	<p th:unless="${check}" th:text="${id} + 'is' + ${falseVal}">messages.</p>
+ -->
+
+<!--
+ 	<table>
+ 		<tr>
+ 			<th>NAME</th>
+ 			<th>MAIL</th>
+ 			<th>TEL</th>
+ 		</tr>
+
+ 		<tr th:each="obj:${data}">	         th:eachは繰り返し行う！dataから値取り出しobj配列に代入する
+ 			<td th:text="${obj[0]}"></td>    obj配列から値を取り出す
+	 		<td th:text="${obj[1]}"></td>
+ 			<td th:text="${obj[2]}"></td>
+		</tr>
+ 	</table>
+ -->
+
+<!-- DataObjectの値取得
+	<h1 th:text="#{content.title}">Helo page</h1>
+	<p th:text="${msg}">message.</p>
+
+	<table th:object="${object}">
+		<tr>
+			<th>ID</th>
+			<td th:text="*{id}"></td>
+		<tr>
+			<th>NAME</th>
+			<td th:text="*{name}"></td>
+		</tr>
+		<tr>
+			<th>MAIL</th>
+			<td th:text="*{value}"></td>
+			<td th:utext="*{value}"></td>    th:utextはエスケープしない
+		</tr>
+
+	</table>
+ -->
+
+<!--
+	<p><a th:href="@{'/home/{id}'(id=${param.id[0]})}">link</a></p>
+ -->
+
+<!--
+	<p th:text= "${param.id[0]}"> URLパラメータの値取得（配列） </p>
+ -->
+
+<!-- message.propertiesで設定した値の表示  "#{}"
+	<h1 th:text="#{content.title}">Helo page</h1>
+	<p th:text="#{content.message}"></p>
+ -->
+
+<!-- Dataの整形
+	<p th:text="${#dates.format(new java.util.Date(), 'dd/MMM/yyyy HH:mm')}"></p>
+	<p th:text="${#numbers.formatInteger(1234,7)}"></p>
+	<p th:text="${#strings.toUpperCase('Welcome to Spring.')}"></p>
+ -->
+
+<!-- フォームコントロール
+	<form method ="post" action="/">  "/" actionも同じPOST送信
+		<input type = "text" name = "text1" th:value = "${value}">
+		<input type ="submit" value = "Click">
+	</form>
+-->
+<!-- フォームコントロール(p.155)
+	<form method = post action="/">
+		<div>
+			<input type = "checkbox" id = "check1" name = "check1">
+			<label for = "check1">チェック</label>
+		</div>
+
+		<div>
+			<input type = "radio" id = "radioA" name = "radio1" value = "male">
+			<label for ="radioA">男性</label>
+		</div>
+
+		<div>
+			<input type = "radio" id = "radioB" name = "radio1" value = "female">
+			<label for ="radioB">女性</label>
+		</div>
+
+		<div>
+			<select id = "select1" name = "select1" size = "4">
+				<option value = "Windows">Windows</option>
+				<option value = "Mac">Mac</option>
+				<option value = "Linux">Linux</option>
+			</select>
+
+			<select id = "select2" name = "select2" size = "4" multiple = "multiple">
+				<option value = "Android">Android</option>
+				<option value = "iphone">iphone</option>
+				<option value = "Winfone">Winfone</option>
+			</select>
+		</div>
+		<input type="submit" value = "Click">
+	</form>
+ -->
+
+
+
+</body>
+</html>
