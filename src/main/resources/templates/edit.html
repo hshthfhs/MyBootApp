@@ -5,11 +5,13 @@
 <title>top page</title>
 </head>
 <body>
-	<h1>Helo page</h1>
+	<h1>Edit page</h1>
 	<p class="msg" th:text="${new java util.Date().toString()}"></p>   <!-- 時を表示しよう  -->
 
 
-	<form method="post" action="/" th:object="${formModel}">
+	<form method="post" action="/edit" th:object="${formModel}">
+		<!-- idをhidden  -->
+		<input type="hidden" name="id" th:value="*{id}">
 		<table>
 			<tr>
 				<td><label for="name">名前</label></td>

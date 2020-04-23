@@ -1,11 +1,82 @@
 package com.tuyano.springboot;
 
+
+import java.util.Optional;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.tuyano.springboot.repositories.MyDataRepository;
 
 @Controller
 public class HeloController {
+
+	@Autowired        //MyDataRepositoryインスタンスをフィールドに関連づける
+	MyDataRepository repository;
+
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public ModelAndView index(
+			//@ModelAttribute エンティティクラスのインスタンスを自動生成（th:objectで指定する値）
+			@ModelAttribute("formModel") MyData mydata,
+			ModelAndView mav) {
+
+		mav.setViewName("index");
+		mav.addObject("msg", "this is sample");
+		Iterable<MyData> list = repository.findAll();
+		mav.addObject("datalist", list);
+
+		return mav;
+	}
+
+	@RequestMapping(value ="/", method = RequestMethod.POST)
+	@Transactional(readOnly=false)
+	public ModelAndView form(
+			@ModelAttribute("formModel") MyData mydata,
+			ModelAndView mav) {
+		repository.saveAndFlush(mydata);
+
+		return new ModelAndView("redirect:/");
+	}
+
+	//永続ダミーデータ
+	@PostConstruct
+	public void init() {
+		MyData d1 = new MyData();
+		d1.setName("tuyano");
+		d1.setAge(123);
+		d1.setMail("hanada@takeshi");
+		d1.setMemo("data!");
+		repository.saveAndFlush(d1);
+	}
+
+	@RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+	public ModelAndView edit(@ModelAttribute MyData mydata,
+			@PathVariable int id, ModelAndView mav) {
+		mav.setViewName("edit");
+		mav.addObject("titale", "edit mydata");
+		Optional<MyData> data = repository.findById((long)id);
+		mav.addObject("formModel", data.get());
+		return mav;
+	}
+
+	@RequestMapping(value = "/edit", method = RequestMethod.POST)
+	@Transactional(readOnly=false)
+	public ModelAndView update(@ModelAttribute MyData mydata,
+			ModelAndView mav) {
+
+		repository.saveAndFlush(mydata);
+		return new ModelAndView("redirect:/");
+
+	}
+
 
 	/*	requestparamを計算して出力
 
@@ -29,6 +100,69 @@ public class HeloController {
 	public DataObject index (@PathVariable int id) {
 		return new DataObject(id, names[id], mails[id]);
 	}
+}
+
+*/
+
+/*  条件式
+	@RequestMapping("/{id}")
+	public ModelAndView index(@PathVariable int id, ModelAndView mav) {
+		mav.setViewName("index");
+		mav.addObject("id",id);               //URLパラメータ
+		mav.addObject("check", id % 2 == 0);  //条件
+		mav.addObject("trueVal", "Even");     //条件(id%2==0)がtrueであればEvenを返す
+		mav.addObject("falseVal", "Odd");     //条件(id%2==0)がfalseであればOddを返す
+
+		return mav;
+	}
+*/
+
+/*
+	@RequestMapping("/{id}")
+	public ModelAndView index(@PathVariable int id, ModelAndView mav) {
+		mav.setViewName("index");
+		mav.addObject("id",id);               //URLパラメータ
+		mav.addObject("check", id >= 0);  //条件
+		mav.addObject("trueVal", "positive");     //trueの場合の処理
+		mav.addObject("falseVal", "negative");     //falseの場合の処理
+		return mav;
+	}
+*/
+/* th:insertで使った
+	@RequestMapping("/")
+	public ModelAndView index(ModelAndView mav) {
+		mav.setViewName("index");
+		return mav;
+	}
+*/
+
+/*  th:each
+	@RequestMapping("/")
+	public ModelAndView index(ModelAndView mav) {
+		mav.setViewName("index");
+		ArrayList<String[]> data = new ArrayList<String[]>();
+		data.add(new String[] {"taro", "taro@yamada", "090-0808-0800"});
+		data.add(new String[] {"hanako", "hanako@flower", "090-0753-0800"});
+		data.add(new String[] {"sachiko", "sachiko@happy", "090-5698-0800"});
+		mav.addObject("data",data);
+
+		return mav;
+	}
+*/
+
+/* DataObjectに値を代入して、index.htmlに渡す
+
+	@RequestMapping("/")
+	public ModelAndView index(ModelAndView mav) {
+		mav.setViewName("index");
+		mav.addObject("msg", "current data.");
+		DataObject obj = new DataObject(123, "hanako", "hanako@flower");
+		mav.addObject("object", obj);
+
+		return mav;
+	}
+*/
+
 }
 
 class DataObject {
@@ -65,7 +199,6 @@ class DataObject {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	*/
 
 
 	/* index.htmlを実行
@@ -169,7 +302,7 @@ class DataObject {
 			return mav;
 		}
 	*/
-
+/*
 	@RequestMapping("/")
 	public ModelAndView index(ModelAndView mav) {
 		mav.setViewName("index");
@@ -186,5 +319,6 @@ class DataObject {
 	@RequestMapping("/home")
 	public String home() {
 		return "forward:/";
-	}
+	}*/
+
 }
